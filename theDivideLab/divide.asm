@@ -4,6 +4,7 @@
 # Programmed using MARS on Mac OS Big Sur
 # Filename: divide.asm
 # Project 1 Part B
+# Registers used: $v0, $a0, $s0, $t0, $t1, $t4, $t5, $t6
 
 .data
 newline: .asciiz "\n"
