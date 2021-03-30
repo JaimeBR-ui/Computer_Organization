@@ -50,16 +50,21 @@ loadargs:
   syscall
 
 loadasuppercase:
+  # Make paragraph uppercase.
   la $a0, str
   jal uppercase
+
+  # Make buffer1 uppercase.
   la $a0, buffer1
   jal uppercase
+
+  # Make buffer2 uppercase.
   la $a0, buffer2
   jal uppercase
 
 findwordamount:
   # $s0 stores freq1, $s1 stores freq2
-  # we use t0 as the return holder
+  # we use t0 as the return holder in this case.
 
   # Get first word frequency.
   la $a2, buffer1
@@ -117,11 +122,13 @@ print:
   syscall
 
   # Print histogram for first
+  # Here we load our function argument to $t0 and $t1.
   la $t0, buffer1
   move $t1, $s0
   jal printHist
 
   # Print histogram for second.
+  # Here we load our function argument to $t0 and $t1.
   la $t0, buffer2
   move $t1, $s1
   jal printHist
@@ -131,12 +138,16 @@ exit:
   syscall
 
 returner:
+  # We use this so that we call call it from branch calls.
   jr $ra
 
 uppercase:
   lb $t0, 0($a0)
+  # We take advantage of this loop to remove newLine characters.
   beq $t0, '\n', tonull
+  # If we reach the end of the string, return.
   beqz $t0, returner
+  # Standard uppercase on branch.
   blt $t0, 'a', continue
   bgt $t0, 'z', continue
   subi $t0, $t0, 32
@@ -148,6 +159,7 @@ continue:
   j uppercase
 
 tonull:
+  # Set byte to null.
   sb $0, 0($a0)
   j continue
 
@@ -163,9 +175,10 @@ printHist:
 
   li $t5, 0 # Our loop counter.
   LoopPH:
-  # Condition
+  # Condition, while our counter is less than the frequency.
   bge $t5, $t1, LoopEndPH
 
+  # Print a block.
   li $v0, 4
   la $a0, block
   syscall
@@ -196,6 +209,7 @@ getwordcount:
   move $t2, $a2 # $t2 will be our inner loop shifter buffer
 
   LoopInner:
+  # Load inner temporary bytes.
   lb $t3, 0($t1)
   lb $t4, 0($t2)
 
@@ -208,6 +222,7 @@ getwordcount:
   addi $t1, $t1, 1
   addi $t2, $t2, 1
   j LoopInner
+
   Found:
   # If found then we increment counter.
   addi $a1, $a1, 1
